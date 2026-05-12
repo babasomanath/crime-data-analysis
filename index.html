@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="import" href="https://github.com/babasomanath/crime-data-analysis/blob/main/odisha_crime_infographic_poster_v2.html">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Odisha Crime Analysis Report 2021–2026</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
@@ -485,7 +485,14 @@
 </style>
 </head>
 <body>
+  <div id="b-placeholder">
+  </div>
 
+<script>
+$(function(){
+  $("#b-placeholder").load("https://github.com/babasomanath/crime-data-analysis/blob/main/odisha_crime_infographic_poster_v2.html");
+});
+</script>
 <!-- MASTHEAD -->
 <div class="masthead">
   <div class="masthead-inner">
