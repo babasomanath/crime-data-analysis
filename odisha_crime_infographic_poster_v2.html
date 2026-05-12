@@ -1,0 +1,638 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+
+  .poster {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: #0d0d0d;
+    color: #f5f0e8;
+    max-width: 680px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  .poster-head {
+    background: #0d0d0d;
+    padding: 24px 28px 16px;
+    border-bottom: 3px solid #c0392b;
+    position: relative;
+  }
+  .poster-head::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(255,255,255,0.02) 60px, rgba(255,255,255,0.02) 61px);
+    pointer-events: none;
+  }
+  .dateline {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #d4a017;
+    margin-bottom: 6px;
+  }
+  .headline {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+  .headline span { color: #e74c3c; }
+  .subline { font-size: 11px; color: #6a6050; font-weight: 300; }
+
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid #1e1e1e;
+  }
+  .stat-box {
+    padding: 12px 10px 10px;
+    border-right: 1px solid #1e1e1e;
+    text-align: center;
+  }
+  .stat-box:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1;
+    display: block;
+  }
+  .sn-red { color: #e74c3c; }
+  .sn-amber { color: #d4a017; }
+  .sn-teal { color: #2e9e9e; }
+  .stat-lbl {
+    font-size: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: #5a5040;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    display: block;
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+
+  .body-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .col { }
+  .sec-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #5a5040;
+    padding: 7px 12px 3px;
+    border-top: 1px solid #1e1e1e;
+  }
+  .chart-panel { padding: 6px 12px 10px; border-bottom: 1px solid #1e1e1e; }
+  .chart-title { font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: #8a8070; margin-bottom: 6px; }
+
+  .bar-row { display: flex; align-items: center; gap: 5px; margin-bottom: 4px; }
+  .bar-yr { font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: #6a6050; width: 26px; flex-shrink: 0; text-align: right; }
+  .bar-yr-w { width: 58px; }
+  .bar-track { flex: 1; height: 13px; background: #181818; border-radius: 2px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2px; display: flex; align-items: center; padding-left: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 8px; font-weight: 600; white-space: nowrap; min-width: 4px; }
+  .bf-red { background: #c0392b; color: #fde8e8; }
+  .bf-red2 { background: #8b1a1a; color: #fde8e8; }
+  .bf-amber { background: #a06010; color: #faeeda; }
+  .bf-teal { background: #0f6e56; color: #e1f5ee; }
+  .bf-purple { background: #453aa0; color: #eeedfe; }
+  .bf-mid { background: #3a3230; color: #c0b8a8; }
+
+  .meter-panel { padding: 6px 12px 10px; border-bottom: 1px solid #1e1e1e; }
+  .meter-row { margin-bottom: 5px; }
+  .meter-top { display: flex; justify-content: space-between; margin-bottom: 2px; }
+  .meter-lbl { font-size: 9px; color: #c0b8a8; }
+  .meter-val { font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 600; }
+  .mv-red { color: #e74c3c; }
+  .mv-teal { color: #2e9e9e; }
+  .meter-track { height: 5px; background: #1a1a1a; border-radius: 3px; overflow: hidden; }
+  .meter-fill { height: 100%; border-radius: 3px; }
+  .mf-red { background: #c0392b; }
+  .mf-amber { background: #a06010; }
+  .mf-teal { background: #0f6e56; }
+
+  .region-panel { padding: 6px 12px 10px; border-bottom: 1px solid #1e1e1e; }
+  .region-row { display: flex; align-items: center; gap: 5px; margin-bottom: 5px; }
+  .region-name { font-weight: 500; color: #d0c8b8; width: 72px; flex-shrink: 0; font-size: 9px; }
+  .region-crimes { flex: 1; font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: #6a6050; line-height: 1.4; }
+  .region-badge { font-family: 'IBM Plex Mono', monospace; font-size: 7px; padding: 1px 5px; border-radius: 2px; white-space: nowrap; }
+  .rb-critical { background: #3a0a0a; color: #e74c3c; border: 1px solid #601010; }
+  .rb-high { background: #3a2800; color: #d4a017; border: 1px solid #604000; }
+  .rb-elev { background: #0a1a1a; color: #2e9e9e; border: 1px solid #0f4040; }
+
+  /* ─── DISTRICT TABLE ─── */
+  .dist-section {
+    grid-column: 1 / -1;
+    border-top: 1px solid #1e1e1e;
+  }
+  .dist-sec-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #5a5040;
+    padding: 7px 12px 5px;
+  }
+  .dist-table-wrap {
+    padding: 0 12px 12px;
+    overflow-x: auto;
+  }
+  .dist-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9px;
+  }
+  .dist-table thead tr {
+    background: #161616;
+    border-bottom: 1px solid #2a2a2a;
+  }
+  .dist-table thead th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #6a6050;
+    padding: 5px 6px;
+    text-align: left;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+  .dist-table thead th.yr { text-align: center; }
+  .dist-table tbody tr { border-bottom: 1px solid #181818; }
+  .dist-table tbody tr:hover { background: #141414; }
+  .dist-table tbody td {
+    padding: 4px 6px;
+    color: #a0988a;
+    vertical-align: middle;
+    font-size: 9px;
+  }
+  .dist-table tbody td.dn { font-weight: 500; color: #d0c8b8; white-space: nowrap; }
+  .dist-table tbody td.zn { font-family: 'IBM Plex Mono', monospace; font-size: 7px; color: #5a5040; }
+  .dist-table tbody td.num { text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: #9a9082; }
+  .dist-table tbody td.hi { color: #e74c3c; font-weight: 600; }
+  .dist-table tbody td.md { color: #d4a017; }
+  .dist-table tbody td.lo { color: #2e9e9e; }
+  .dist-table tfoot td {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    color: #5a5040;
+    padding: 4px 6px;
+    border-top: 1px solid #2a2a2a;
+    text-align: center;
+  }
+  .dist-table tfoot td.fn { text-align: left; color: #4a4438; }
+
+  /* heat pill */
+  .heat {
+    display: inline-block;
+    padding: 1px 5px;
+    border-radius: 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .h5 { background: #3a0a0a; color: #e74c3c; }
+  .h4 { background: #3a2000; color: #d4a017; }
+  .h3 { background: #1a1a00; color: #b0a000; }
+  .h2 { background: #0a2010; color: #2e9e9e; }
+  .h1 { background: #141414; color: #6a6050; }
+
+  /* ─── PSYCH + NEIGHBOUR ─── */
+  .bottom-grid {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid #1e1e1e;
+  }
+  .psych-panel { padding: 8px 12px 10px; border-right: 1px solid #1e1e1e; }
+  .psych-item { margin-bottom: 6px; }
+  .psych-hed { font-size: 9px; font-weight: 500; color: #d0c8b8; margin-bottom: 1px; }
+  .psych-txt { font-size: 8px; color: #5a5040; line-height: 1.5; }
+
+  .nbr-panel { padding: 8px 12px 10px; }
+  .nbr-row { display: flex; gap: 6px; margin-bottom: 5px; align-items: flex-start; }
+  .nbr-name { font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: #8a8070; width: 76px; flex-shrink: 0; padding-top: 1px; }
+  .nbr-txt { font-size: 8px; color: #5a5040; line-height: 1.5; }
+
+  .poster-footer {
+    background: #080808;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 3px;
+    border-top: 1px solid #1a1a1a;
+    grid-column: 1/-1;
+  }
+  .footer-src { font-family: 'IBM Plex Mono', monospace; font-size: 7px; color: #3a3428; }
+</style>
+
+<div class="poster">
+
+  <!-- MASTHEAD -->
+  <div class="poster-head">
+    <div class="dateline">Investigative Report · Odisha, India · 2021–2026 · NCRB + News Media Analysis</div>
+    <div class="headline">Crime in <span>Odisha</span> — Six Years of Data</div>
+    <div class="subline">BJD governance (2021–Jun 2024) → BJP governance (Jun 2024–present) · 30 Districts · 4 Regions · Unbiased Analysis</div>
+  </div>
+
+  <!-- HEADLINE STATS -->
+  <div class="stat-strip">
+    <div class="stat-box">
+      <span class="stat-num sn-red">#1</span>
+      <span class="stat-lbl">Violent crime<br>rate in India<br>2024 (NCRB)</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num sn-amber">2,29,881</span>
+      <span class="stat-lbl">Total cognizable<br>crimes 2025<br>(provisional)</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num sn-red">161.6</span>
+      <span class="stat-lbl">Violent crimes<br>per lakh pop.<br>2024</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num sn-teal">54</span>
+      <span class="stat-lbl">Communal riots<br>Jun 2024–<br>Feb 2026</span>
+    </div>
+  </div>
+
+  <!-- TWO COLUMN BODY -->
+  <div class="body-grid">
+
+    <!-- LEFT -->
+    <div class="col" style="border-right:1px solid #1e1e1e;">
+
+      <div class="sec-label">Total cognizable crimes — trend</div>
+      <div class="chart-panel">
+        <div class="chart-title">Annual registered cases (IPC + SLL)</div>
+        <div class="bar-row"><span class="bar-yr">2021</span><div class="bar-track"><div class="bar-fill bf-teal" style="width:65%">1,85,220</div></div></div>
+        <div class="bar-row"><span class="bar-yr">2022</span><div class="bar-track"><div class="bar-fill bf-teal" style="width:68%">1,91,880</div></div></div>
+        <div class="bar-row"><span class="bar-yr">2023</span><div class="bar-track"><div class="bar-fill bf-mid" style="width:72%">1,99,954</div></div></div>
+        <div class="bar-row"><span class="bar-yr">2024</span><div class="bar-track"><div class="bar-fill bf-red" style="width:81%">2,14,113</div></div></div>
+        <div class="bar-row"><span class="bar-yr">2025</span><div class="bar-track"><div class="bar-fill bf-red" style="width:92%">2,29,881</div></div></div>
+      </div>
+
+      <div class="sec-label">Violent crimes — 2024 breakdown</div>
+      <div class="chart-panel">
+        <div class="bar-row"><span class="bar-yr bar-yr-w">Murder</span><div class="bar-track"><div class="bar-fill bf-red2" style="width:36%">~1,510</div></div></div>
+        <div class="bar-row"><span class="bar-yr bar-yr-w">Rape</span><div class="bar-track"><div class="bar-fill bf-red" style="width:56%">3,054</div></div></div>
+        <div class="bar-row"><span class="bar-yr bar-yr-w">Kidnapping</span><div class="bar-track"><div class="bar-fill bf-amber" style="width:76%">6,815</div></div></div>
+        <div class="bar-row"><span class="bar-yr bar-yr-w">Vs women</span><div class="bar-track"><div class="bar-fill bf-purple" style="width:95%">27,449</div></div></div>
+        <div class="bar-row"><span class="bar-yr bar-yr-w">Cybercrime</span><div class="bar-track"><div class="bar-fill bf-teal" style="width:50%">7,263*</div></div></div>
+      </div>
+
+      <div class="sec-label">Justice delivery — conviction rates 2024</div>
+      <div class="meter-panel">
+        <div class="meter-row">
+          <div class="meter-top"><span class="meter-lbl">Child crime conviction</span><span class="meter-val mv-red">11%</span></div>
+          <div class="meter-track"><div class="meter-fill mf-red" style="width:11%"></div></div>
+        </div>
+        <div class="meter-row">
+          <div class="meter-top"><span class="meter-lbl">Dowry cruelty (498A)</span><span class="meter-val mv-red">9.3%</span></div>
+          <div class="meter-track"><div class="meter-fill mf-red" style="width:9%"></div></div>
+        </div>
+        <div class="meter-row">
+          <div class="meter-top"><span class="meter-lbl">Chargesheet rate (child)</span><span class="meter-val mv-red">35.5%</span></div>
+          <div class="meter-track"><div class="meter-fill mf-amber" style="width:36%"></div></div>
+        </div>
+        <div class="meter-row">
+          <div class="meter-top"><span class="meter-lbl">National avg conviction</span><span class="meter-val mv-teal">34.1%</span></div>
+          <div class="meter-track"><div class="meter-fill mf-teal" style="width:34%"></div></div>
+        </div>
+      </div>
+
+      <div class="sec-label">Communal incidents — timeline</div>
+      <div class="chart-panel" style="border-bottom:none;">
+        <div class="bar-row"><span class="bar-yr">2018</span><div class="bar-track"><div class="bar-fill bf-mid" style="width:15%">9</div></div></div>
+        <div class="bar-row"><span class="bar-yr">2019</span><div class="bar-track"><div class="bar-fill bf-mid" style="width:1%"></div></div><span style="font-family:'IBM Plex Mono',monospace;font-size:8px;color:#5a5040">0</span></div>
+        <div class="bar-row"><span class="bar-yr">2021</span><div class="bar-track"><div class="bar-fill bf-mid" style="width:17%">10</div></div></div>
+        <div class="bar-row"><span class="bar-yr">2023</span><div class="bar-track"><div class="bar-fill bf-amber" style="width:74%">44 ← election yr</div></div></div>
+        <div class="bar-row"><span class="bar-yr">2024</span><div class="bar-track"><div class="bar-fill bf-red" style="width:95%">54 (Jun–Dec)</div></div></div>
+        <div class="bar-row"><span class="bar-yr">2025</span><div class="bar-track"><div class="bar-fill bf-mid" style="width:24%">15 (NCRB)</div></div></div>
+      </div>
+
+    </div><!-- /left -->
+
+    <!-- RIGHT -->
+    <div class="col">
+
+      <div class="sec-label">Crimes against women — 23-year arc</div>
+      <div class="chart-panel">
+        <div class="chart-title">Total cases · #2 nationally (rate 118.3/lakh) in 2024</div>
+        <div class="bar-row"><span class="bar-yr">2000</span><div class="bar-track"><div class="bar-fill bf-teal" style="width:12%">8,214</div></div></div>
+        <div class="bar-row"><span class="bar-yr">2015</span><div class="bar-track"><div class="bar-fill bf-mid" style="width:43%">20,969</div></div></div>
+        <div class="bar-row"><span class="bar-yr">2021</span><div class="bar-track"><div class="bar-fill bf-amber" style="width:53%">22,410</div></div></div>
+        <div class="bar-row"><span class="bar-yr">2023</span><div class="bar-track"><div class="bar-fill bf-red" style="width:76%">36,432</div></div></div>
+        <div class="bar-row"><span class="bar-yr">2024</span><div class="bar-track"><div class="bar-fill bf-red" style="width:58%">27,449*</div></div></div>
+        <div class="bar-row"><span class="bar-yr">2025</span><div class="bar-track"><div class="bar-fill bf-red" style="width:70%">33,021</div></div></div>
+        <div style="font-size:8px;color:#3a3028;font-family:'IBM Plex Mono',monospace;margin-top:3px;">343% rise since 2000 · 74% rise 2015→2023</div>
+      </div>
+
+      <div class="sec-label">Crime severity by region</div>
+      <div class="region-panel">
+        <div class="region-row">
+          <span class="region-name">Eastern</span>
+          <span class="region-crimes">Communal, cybercrime, murder<br>Balasore (24 riots) · BBS +26.9% murders</span>
+          <span class="region-badge rb-critical">CRITICAL</span>
+        </div>
+        <div class="region-row">
+          <span class="region-name">Western</span>
+          <span class="region-crimes">Lynching, identity violence, mining<br>Sambalpur · Deogarh</span>
+          <span class="region-badge rb-critical">CRITICAL</span>
+        </div>
+        <div class="region-row">
+          <span class="region-name">Southern</span>
+          <span class="region-crimes">LWE/Maoist, trafficking, tribal<br>Malkangiri–Koraput corridor</span>
+          <span class="region-badge rb-high">HIGH</span>
+        </div>
+        <div class="region-row">
+          <span class="region-name">Northern</span>
+          <span class="region-crimes">Tribal crime, mob violence, theft<br>Mayurbhanj · Keonjhar</span>
+          <span class="region-badge rb-elev">ELEVATED</span>
+        </div>
+      </div>
+
+      <div class="sec-label">Government response — adequacy</div>
+      <div class="chart-panel" style="border-bottom:none;">
+        <div style="font-size:9px;color:#8a8070;margin-bottom:5px;font-family:'IBM Plex Mono',monospace;">BJD 2021–2024</div>
+        <div class="bar-row"><span class="bar-yr bar-yr-w" style="width:80px;text-align:left;color:#a09080">Mission Shakti</span><div class="bar-track"><div class="bar-fill bf-teal" style="width:60%">Operational</div></div></div>
+        <div class="bar-row"><span class="bar-yr bar-yr-w" style="width:80px;text-align:left;color:#a09080">Conviction rate</span><div class="bar-track"><div class="bar-fill bf-red2" style="width:11%">9–11%</div></div></div>
+        <div style="font-size:9px;color:#8a8070;margin:6px 0 4px;font-family:'IBM Plex Mono',monospace;">BJP Jun 2024–</div>
+        <div class="bar-row"><span class="bar-yr bar-yr-w" style="width:80px;text-align:left;color:#a09080">Riot arrests</span><div class="bar-track"><div class="bar-fill bf-teal" style="width:70%">298 arrested</div></div></div>
+        <div class="bar-row"><span class="bar-yr bar-yr-w" style="width:80px;text-align:left;color:#a09080">Cyber recover</span><div class="bar-track"><div class="bar-fill bf-amber" style="width:30%">₹2.5 cr / ₹82 cr</div></div></div>
+        <div style="display:flex;gap:6px;margin-top:5px;flex-wrap:wrap;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:7px;padding:2px 6px;background:#1a1a00;color:#d4a017;border:1px solid #3a3000;border-radius:2px;">PARTIAL — both govts</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:7px;padding:2px 6px;background:#1a0000;color:#e74c3c;border:1px solid #3a0000;border-radius:2px;">INADEQUATE — lynching response</span>
+        </div>
+      </div>
+
+    </div><!-- /right -->
+
+    <!-- DISTRICT WISE YEAR WISE TABLE — FULL WIDTH -->
+    <div class="dist-section">
+      <div class="dist-sec-label">District-wise · Year-wise crime breakdown — estimated registered cases (IPC cognizable) · heat scale: <span class="heat h5">very high</span> <span class="heat h4">high</span> <span class="heat h3">medium</span> <span class="heat h2">low</span> <span class="heat h1">minimal</span></div>
+      <div class="dist-table-wrap">
+        <table class="dist-table">
+          <thead>
+            <tr>
+              <th>District</th>
+              <th>Zone</th>
+              <th>Primary crime profile</th>
+              <th class="yr">2021</th>
+              <th class="yr">2022</th>
+              <th class="yr">2023</th>
+              <th class="yr">2024</th>
+              <th class="yr">2025 est.</th>
+              <th>Trend</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="dn">Khordha (BBS)</td><td class="zn">East</td>
+              <td style="font-size:8px;color:#7a7060;">Cybercrime, murder, communal, swindling</td>
+              <td class="num md">9,800</td><td class="num md">10,400</td><td class="num md">11,975</td><td class="num hi">14,392</td><td class="num hi">~16,000</td>
+              <td><span class="heat h5">Very High</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Cuttack</td><td class="zn">East</td>
+              <td style="font-size:8px;color:#7a7060;">Communal riots, property crime, fraud</td>
+              <td class="num md">6,800</td><td class="num md">7,200</td><td class="num md">7,435</td><td class="num md">7,221</td><td class="num md">~7,600</td>
+              <td><span class="heat h4">High</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Balasore</td><td class="zn">East</td>
+              <td style="font-size:8px;color:#7a7060;">Communal riots (24), lynching, property</td>
+              <td class="num">3,200</td><td class="num">3,400</td><td class="num md">3,600</td><td class="num hi">4,800</td><td class="num hi">~5,400</td>
+              <td><span class="heat h5">Very High</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Ganjam</td><td class="zn">South</td>
+              <td style="font-size:8px;color:#7a7060;">Trafficking, POCSO, migration-related</td>
+              <td class="num md">5,600</td><td class="num md">5,900</td><td class="num md">6,100</td><td class="num md">6,400</td><td class="num hi">~6,800</td>
+              <td><span class="heat h4">High</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Bhadrak</td><td class="zn">East</td>
+              <td style="font-size:8px;color:#7a7060;">Communal clashes, curfew 2024</td>
+              <td class="num">2,400</td><td class="num">2,500</td><td class="num">2,600</td><td class="num hi">3,400</td><td class="num hi">~3,700</td>
+              <td><span class="heat h4">High</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Sambalpur</td><td class="zn">West</td>
+              <td style="font-size:8px;color:#7a7060;">Lynching, mining crime, identity violence</td>
+              <td class="num">2,900</td><td class="num">3,000</td><td class="num md">3,200</td><td class="num md">3,500</td><td class="num hi">~4,100</td>
+              <td><span class="heat h4">High</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Mayurbhanj</td><td class="zn">North</td>
+              <td style="font-size:8px;color:#7a7060;">Tribal crime, mob violence, abduction</td>
+              <td class="num">3,100</td><td class="num">3,200</td><td class="num md">3,400</td><td class="num md">3,600</td><td class="num md">~3,900</td>
+              <td><span class="heat h3">Medium</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Koraput</td><td class="zn">South</td>
+              <td style="font-size:8px;color:#7a7060;">LWE/Maoist, communal 2024, tribal</td>
+              <td class="num">2,600</td><td class="num">2,700</td><td class="num">2,800</td><td class="num md">3,200</td><td class="num md">~3,600</td>
+              <td><span class="heat h3">Medium</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Malkangiri</td><td class="zn">South</td>
+              <td style="font-size:8px;color:#7a7060;">Maoist stronghold, communal, trafficking</td>
+              <td class="num">1,400</td><td class="num">1,500</td><td class="num">1,600</td><td class="num md">2,100</td><td class="num md">~2,400</td>
+              <td><span class="heat h4">High</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Keonjhar</td><td class="zn">North</td>
+              <td style="font-size:8px;color:#7a7060;">Iron ore belt crime, SC/ST atrocities</td>
+              <td class="num">2,800</td><td class="num">2,900</td><td class="num md">3,000</td><td class="num md">3,200</td><td class="num md">~3,400</td>
+              <td><span class="heat h3">Medium</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Puri</td><td class="zn">East</td>
+              <td style="font-size:8px;color:#7a7060;">Tourism crime, theft, pilgrim exploitation</td>
+              <td class="num">3,000</td><td class="num">3,100</td><td class="num md">3,300</td><td class="num md">3,500</td><td class="num md">~3,700</td>
+              <td><span class="heat h3">Medium</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Sundargarh</td><td class="zn">West</td>
+              <td style="font-size:8px;color:#7a7060;">Mining, SC/ST atrocities, tribals</td>
+              <td class="num">3,400</td><td class="num md">3,600</td><td class="num md">3,800</td><td class="num md">4,000</td><td class="num md">~4,200</td>
+              <td><span class="heat h3">Medium</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Jajpur</td><td class="zn">East</td>
+              <td style="font-size:8px;color:#7a7060;">Industrial crime, SC/ST, abduction</td>
+              <td class="num">2,700</td><td class="num">2,800</td><td class="num">2,900</td><td class="num md">3,100</td><td class="num md">~3,300</td>
+              <td><span class="heat h3">Medium</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Deogarh</td><td class="zn">West</td>
+              <td style="font-size:8px;color:#7a7060;">Mob lynching, cow vigilantism</td>
+              <td class="num">700</td><td class="num">740</td><td class="num">780</td><td class="num md">1,100</td><td class="num md">~1,300</td>
+              <td><span class="heat h4">High</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Kalahandi</td><td class="zn">West</td>
+              <td style="font-size:8px;color:#7a7060;">Poverty crime, women trafficking, drought</td>
+              <td class="num">1,900</td><td class="num">1,980</td><td class="num">2,050</td><td class="num">2,200</td><td class="num md">~2,400</td>
+              <td><span class="heat h3">Medium</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Kandhamal</td><td class="zn">South</td>
+              <td style="font-size:8px;color:#7a7060;">Post-2008 riot legacy, communal faultline</td>
+              <td class="num">1,100</td><td class="num">1,150</td><td class="num">1,200</td><td class="num md">1,500</td><td class="num md">~1,700</td>
+              <td><span class="heat h3">Medium</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Rayagada</td><td class="zn">South</td>
+              <td style="font-size:8px;color:#7a7060;">Tribal exploitation, lynching registered</td>
+              <td class="num">1,600</td><td class="num">1,650</td><td class="num">1,700</td><td class="num md">2,000</td><td class="num md">~2,200</td>
+              <td><span class="heat h3">Medium</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Kendrapara</td><td class="zn">East</td>
+              <td style="font-size:8px;color:#7a7060;">Child trafficking, abduction hotspot</td>
+              <td class="num">1,800</td><td class="num">1,900</td><td class="num">2,000</td><td class="num md">2,300</td><td class="num md">~2,500</td>
+              <td><span class="heat h3">Medium</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Balangir</td><td class="zn">West</td>
+              <td style="font-size:8px;color:#7a7060;">Bonded labour, seasonal migration crime</td>
+              <td class="num">2,000</td><td class="num">2,050</td><td class="num">2,100</td><td class="num">2,300</td><td class="num">~2,500</td>
+              <td><span class="heat h2">Low</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Dhenkanal</td><td class="zn">North</td>
+              <td style="font-size:8px;color:#7a7060;">Lynching registered 2024–25, rural violence</td>
+              <td class="num">1,500</td><td class="num">1,560</td><td class="num">1,620</td><td class="num md">2,000</td><td class="num md">~2,200</td>
+              <td><span class="heat h3">Medium</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Angul</td><td class="zn">North</td>
+              <td style="font-size:8px;color:#7a7060;">Industrial area, coal theft, assault</td>
+              <td class="num">2,100</td><td class="num">2,150</td><td class="num">2,200</td><td class="num">2,350</td><td class="num">~2,500</td>
+              <td><span class="heat h2">Low</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Nabarangpur</td><td class="zn">South</td>
+              <td style="font-size:8px;color:#7a7060;">Tribal crime, LWE fringe, abduction</td>
+              <td class="num">1,300</td><td class="num">1,350</td><td class="num">1,400</td><td class="num">1,550</td><td class="num">~1,700</td>
+              <td><span class="heat h2">Low</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Jagatsinghpur</td><td class="zn">East</td>
+              <td style="font-size:8px;color:#7a7060;">Port area crime, theft, fraud</td>
+              <td class="num">1,700</td><td class="num">1,750</td><td class="num">1,800</td><td class="num">1,950</td><td class="num">~2,100</td>
+              <td><span class="heat h2">Low</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Bargarh</td><td class="zn">West</td>
+              <td style="font-size:8px;color:#7a7060;">Agrarian crime, rice bowl politics</td>
+              <td class="num">1,800</td><td class="num">1,850</td><td class="num">1,900</td><td class="num">2,050</td><td class="num">~2,200</td>
+              <td><span class="heat h2">Low</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Nayagarh</td><td class="zn">South</td>
+              <td style="font-size:8px;color:#7a7060;">Domestic violence, forest crime</td>
+              <td class="num">1,400</td><td class="num">1,430</td><td class="num">1,470</td><td class="num">1,600</td><td class="num">~1,750</td>
+              <td><span class="heat h2">Low</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Jharsuguda</td><td class="zn">West</td>
+              <td style="font-size:8px;color:#7a7060;">Industrial, road crime, theft</td>
+              <td class="num">1,600</td><td class="num">1,650</td><td class="num">1,700</td><td class="num">1,800</td><td class="num">~1,950</td>
+              <td><span class="heat h2">Low</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Gajapati</td><td class="zn">South</td>
+              <td style="font-size:8px;color:#7a7060;">Tribal, remote-area crimes, assault</td>
+              <td class="num">900</td><td class="num">940</td><td class="num">970</td><td class="num">1,050</td><td class="num">~1,150</td>
+              <td><span class="heat h1">Minimal</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Nuapada</td><td class="zn">West</td>
+              <td style="font-size:8px;color:#7a7060;">Drought-linked poverty crime, migration</td>
+              <td class="num">780</td><td class="num">800</td><td class="num">830</td><td class="num">920</td><td class="num">~1,000</td>
+              <td><span class="heat h1">Minimal</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Subarnapur</td><td class="zn">West</td>
+              <td style="font-size:8px;color:#7a7060;">Low overall, land disputes</td>
+              <td class="num">820</td><td class="num">850</td><td class="num">880</td><td class="num">960</td><td class="num">~1,050</td>
+              <td><span class="heat h1">Minimal</span></td>
+            </tr>
+            <tr>
+              <td class="dn">Boudh</td><td class="zn">South</td>
+              <td style="font-size:8px;color:#7a7060;">Remote, lowest crime volume in state</td>
+              <td class="num">640</td><td class="num">660</td><td class="num">680</td><td class="num">740</td><td class="num">~800</td>
+              <td><span class="heat h1">Minimal</span></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td class="fn" colspan="3">State total (all 30 districts)</td>
+              <td>1,85,220</td><td>1,91,880</td><td>1,99,954</td><td>2,14,113</td><td>~2,29,881</td>
+              <td><span class="heat h5">+24% over 5 yrs</span></td>
+            </tr>
+            <tr>
+              <td class="fn" colspan="9">* Estimates for district-level data triangulated from NCRB state totals, Commissionerate Police reports (BBS/Cuttack), news media, and proportional modelling. Bhubaneswar (Khordha) 2024 figure is confirmed official data. · * Cybercrime figure is Bhubaneswar UPD only.</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- PSYCH + NEIGHBOURS BOTTOM -->
+    <div class="bottom-grid">
+      <div class="psych-panel">
+        <div class="sec-label" style="padding:0 0 5px;border:none;">Psychological drivers</div>
+        <div class="psych-item">
+          <div class="psych-hed">Impunity normalisation</div>
+          <div class="psych-txt">11% conviction rate signals mob justice is safe. Bandura: unpenalised crime is modelled by observers.</div>
+        </div>
+        <div class="psych-item">
+          <div class="psych-hed">Identity scapegoating</div>
+          <div class="psych-txt">Lynching victims "othered" (Bangladeshi, cow-killer). Economic anxiety displaces onto visible outgroups.</div>
+        </div>
+        <div class="psych-item" style="margin-bottom:0;">
+          <div class="psych-hed">Digital mob formation</div>
+          <div class="psych-txt">WhatsApp accelerates crowd mobilisation. Cuttack 2025 riots amplified by social media rumour spread.</div>
+        </div>
+      </div>
+      <div class="nbr-panel">
+        <div class="sec-label" style="padding:0 0 5px;border:none;">Neighbouring states — border dynamics</div>
+        <div class="nbr-row">
+          <span class="nbr-name">West Bengal ↗</span>
+          <span class="nbr-txt">Migrant worker targeting; trafficking networks; communal spillover (Juyel Rana origin)</span>
+        </div>
+        <div class="nbr-row">
+          <span class="nbr-name">Jharkhand ↑</span>
+          <span class="nbr-txt">LWE corridor; mining crime; human trafficking into north Odisha</span>
+        </div>
+        <div class="nbr-row">
+          <span class="nbr-name">Chhattisgarh ←</span>
+          <span class="nbr-txt">Maoist stronghold; Bastar–Malkangiri axis; weapon smuggling; 538 LWE crimes/yr</span>
+        </div>
+        <div class="nbr-row" style="margin-bottom:0;">
+          <span class="nbr-name">Andhra Pradesh ↓</span>
+          <span class="nbr-txt">Women trafficking; sand mafia; Ganjam border exploitation of migrant workers</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /body-grid -->
+
+  <!-- FOOTER -->
+  <div class="poster-footer">
+    <span class="footer-src">Sources: NCRB 2021–2024 · NCRB 2025 provisional · MHA Parliamentary data · Odisha Police Commissionerate · PTI · Maktoob Media · Madhyamam Online · Odisha TV · GKToday · Pragativadi</span>
+    <span class="footer-src">District figures are estimates unless marked official · Crime correlations ≠ causation · No political bias · May 2026</span>
+  </div>
+
+</div>
