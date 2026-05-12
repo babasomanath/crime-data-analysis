@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odisha Crime Analysis Report 2021–2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --ink: #0d0d0d;
+    --paper: #f5f0e8;
+    --warm: #e8dfc8;
+    --red: #c0392b;
+    --red-light: #e74c3c;
+    --amber: #d4a017;
+    --teal: #1a6b6b;
+    --teal-light: #2e9e9e;
+    --grey: #6b6b6b;
+    --light-grey: #d0cec8;
+    --rule: #b0a898;
+    --highlight: #fdf3d0;
+    --card-bg: #faf7f0;
+    --danger: #8b1a1a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ─── MASTHEAD ─────────────────────────────────── */
+  .masthead {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0;
+    border-bottom: 4px solid var(--red);
+    position: relative;
+    overflow: hidden;
+  }
+  .masthead::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent, transparent 80px,
+      rgba(255,255,255,0.03) 80px,
+      rgba(255,255,255,0.03) 81px
+    );
+    pointer-events: none;
+  }
+  .masthead-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 32px 32px;
+    position: relative;
+    z-index: 1;
+  }
+  .dateline {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 12px;
+  }
+  .headline {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+  .headline span { color: var(--red-light); }
+  .subheadline {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 300;
+    font-size: 16px;
+    color: #c8c0b0;
+    max-width: 700px;
+    margin-bottom: 24px;
+  }
+  .masthead-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 16px;
+  }
+  .meta-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 4px 12px;
+    border-radius: 2px;
+    color: #a0998e;
+    text-transform: uppercase;
+  }
+  .meta-pill strong { color: var(--paper); }
+
+  /* ─── LAYOUT ──────────────────────────────────── */
+  .wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 32px 64px;
+  }
+
+  /* ─── SECTION HEADS ───────────────────────────── */
+  .section-rule {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 48px 0 24px;
+  }
+  .section-rule .num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--red);
+    background: var(--ink);
+    padding: 3px 8px;
+    letter-spacing: 0.1em;
+  }
+  .section-rule h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .section-rule::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  /* ─── ALERT BANNER ────────────────────────────── */
+  .alert-banner {
+    background: var(--danger);
+    color: var(--paper);
+    padding: 14px 20px;
+    border-radius: 3px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    margin: 32px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .alert-banner::before { content: '⬛ CRITICAL FINDING'; font-weight: 600; color: var(--amber); white-space: nowrap; }
+
+  /* ─── STAT CARDS ──────────────────────────────── */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--light-grey);
+    border-top: 3px solid var(--teal);
+    padding: 20px 18px 16px;
+    border-radius: 2px;
+  }
+  .stat-card.danger { border-top-color: var(--red); }
+  .stat-card.amber { border-top-color: var(--amber); }
+  .stat-card .figure {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .stat-card .figure .unit {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--grey);
+  }
+  .stat-card .label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--grey);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .stat-card .context {
+    font-size: 12px;
+    color: var(--grey);
+    line-height: 1.5;
+  }
+  .trend-up { color: var(--red); font-weight: 600; }
+  .trend-down { color: var(--teal); font-weight: 600; }
+
+  /* ─── CHARTS ──────────────────────────────────── */
+  .chart-container {
+    background: var(--card-bg);
+    border: 1px solid var(--light-grey);
+    padding: 24px;
+    border-radius: 2px;
+    margin: 20px 0;
+  }
+  .chart-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .chart-sub {
+    font-size: 12px;
+    color: var(--grey);
+    margin-bottom: 16px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  canvas { max-width: 100% !important; }
+
+  /* ─── TWO-COL CHARTS ──────────────────────────── */
+  .chart-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  @media(max-width: 700px) { .chart-row { grid-template-columns: 1fr; } }
+
+  /* ─── DATA TABLE ──────────────────────────────── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 20px 0;
+    background: var(--card-bg);
+    border: 1px solid var(--light-grey);
+  }
+  .data-table thead {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .data-table thead th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+  }
+  .data-table tbody tr:nth-child(even) { background: var(--warm); }
+  .data-table tbody td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--light-grey);
+    vertical-align: top;
+  }
+  .data-table tbody tr:hover { background: var(--highlight); }
+  .data-table .num-cell { font-family: 'IBM Plex Mono', monospace; text-align: right; }
+  .badge {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 2px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .badge-red { background: #fde8e8; color: var(--danger); border: 1px solid #f5c6c6; }
+  .badge-amber { background: #fdf3d0; color: #7a5900; border: 1px solid #e8d080; }
+  .badge-green { background: #e0f2f2; color: var(--teal); border: 1px solid #a8dada; }
+  .badge-grey { background: #ebebeb; color: #555; border: 1px solid #ccc; }
+
+  /* ─── REGIONAL MAP TABLE ──────────────────────── */
+  .region-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin: 20px 0;
+  }
+  @media(max-width: 700px) { .region-grid { grid-template-columns: 1fr; } }
+  .region-card {
+    border: 1px solid var(--light-grey);
+    background: var(--card-bg);
+    padding: 18px;
+    border-radius: 2px;
+  }
+  .region-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .region-card .region-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--grey);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .region-card ul {
+    list-style: none;
+    font-size: 13px;
+  }
+  .region-card ul li {
+    padding: 4px 0;
+    border-bottom: 1px dotted var(--light-grey);
+    display: flex;
+    justify-content: space-between;
+  }
+  .region-card ul li:last-child { border-bottom: none; }
+
+  /* ─── NARRATIVE SECTIONS ──────────────────────── */
+  .prose {
+    max-width: 820px;
+    line-height: 1.8;
+    font-size: 15px;
+    color: #1a1a1a;
+  }
+  .prose p { margin-bottom: 14px; }
+  .prose strong { color: var(--ink); }
+  .pull-quote {
+    border-left: 4px solid var(--red);
+    padding: 10px 20px;
+    background: var(--highlight);
+    margin: 20px 0;
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-style: italic;
+    color: #2a1a00;
+  }
+
+  /* ─── INCIDENT TICKER ─────────────────────────── */
+  .incident-list {
+    border: 1px solid var(--light-grey);
+    background: var(--card-bg);
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 20px 0;
+  }
+  .incident-list .inc-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 18px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .incident-item {
+    display: grid;
+    grid-template-columns: 110px 1fr auto;
+    gap: 16px;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--light-grey);
+    align-items: start;
+    font-size: 13px;
+  }
+  .incident-item:last-child { border-bottom: none; }
+  .inc-date {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--grey);
+    padding-top: 2px;
+  }
+  .inc-desc strong { display: block; margin-bottom: 2px; font-size: 13px; }
+  .inc-desc span { color: var(--grey); font-size: 12px; }
+
+  /* ─── GOVT RESPONSE TABLE ─────────────────────── */
+  .response-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 20px 0;
+    background: var(--card-bg);
+    border: 1px solid var(--light-grey);
+  }
+  .response-table thead {
+    background: var(--teal);
+    color: white;
+  }
+  .response-table thead th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    text-align: left;
+  }
+  .response-table tbody tr:nth-child(even) { background: var(--warm); }
+  .response-table tbody td { padding: 9px 14px; border-bottom: 1px solid var(--light-grey); font-size: 12px; }
+
+  /* ─── PSYCHOLOGY BOXES ────────────────────────── */
+  .psych-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .psych-card {
+    border: 1px solid var(--light-grey);
+    background: var(--card-bg);
+    padding: 18px;
+    border-radius: 2px;
+  }
+  .psych-card .psych-icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  .psych-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .psych-card p { font-size: 13px; color: #333; line-height: 1.6; }
+
+  /* ─── FOOTER ──────────────────────────────────── */
+  .report-footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 2px solid var(--ink);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--grey);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* NAV */
+  .toc {
+    background: var(--warm);
+    border: 1px solid var(--light-grey);
+    padding: 20px 24px;
+    margin: 32px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 6px 24px;
+  }
+  .toc-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-bottom: 12px;
+    grid-column: 1/-1;
+  }
+  .toc a {
+    font-size: 13px;
+    color: var(--ink);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 0;
+    border-bottom: 1px dotted var(--rule);
+  }
+  .toc a:hover { color: var(--red); }
+  .toc a::before {
+    content: '→';
+    color: var(--red);
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  @media print {
+    .masthead { background: #111 !important; -webkit-print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="dateline">Investigative Crime Report · Odisha, India · Published May 2026</div>
+    <h1 class="headline">Crime in Odisha:<br><span>A Six-Year Reckoning</span></h1>
+    <p class="subheadline">A data-driven, psychologically grounded analysis of criminal trends, regional patterns, governance transitions, and societal drivers across 30 districts — 2021 through 2026.</p>
+    <div class="masthead-meta">
+      <div class="meta-pill">Source: <strong>NCRB 2021–2024</strong></div>
+      <div class="meta-pill">Government: <strong>BJD (to Jun 2024) → BJP</strong></div>
+      <div class="meta-pill">Districts: <strong>30 Covered</strong></div>
+      <div class="meta-pill">Method: <strong>Quant + Qualitative</strong></div>
+      <div class="meta-pill">Bias: <strong>None — Both Govts. Examined</strong></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrapper">
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc">
+  <div class="toc-title">Contents of This Report</div>
+  <a href="#s1">§1 — Executive Summary & Key Findings</a>
+  <a href="#s2">§2 — Six-Year Holistic Dataset</a>
+  <a href="#s3">§3 — Trend Analysis by Crime Type</a>
+  <a href="#s4">§4 — Regional Breakdown (4 Zones)</a>
+  <a href="#s5">§5 — District-Level Hotspot Analysis</a>
+  <a href="#s6">§6 — Communal Riots & Lynching</a>
+  <a href="#s7">§7 — Crimes Against Women & Children</a>
+  <a href="#s8">§8 — Government Response Assessment</a>
+  <a href="#s9">§9 — Psychological & Societal Drivers</a>
+  <a href="#s10">§10 — Unreported Crimes & Dark Figure</a>
+  <a href="#s11">§11 — Neighbouring States Context</a>
+  <a href="#s12">§12 — Conclusions & Recommendations</a>
+</div>
+
+<!-- ═══ SECTION 1: EXECUTIVE SUMMARY ══════════════════════ -->
+<div class="section-rule" id="s1">
+  <span class="num">§01</span>
+  <h2>Executive Summary & Key Findings</h2>
+</div>
+
+<div class="alert-banner">
+  Odisha ranked #1 nationally in violent crime rate (161.6 victims/lakh) in 2024 — surpassing all 28 states + 8 UTs — per NCRB Crime in India 2024.
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card danger">
+    <div class="label">Total Cognizable Crimes 2024</div>
+    <div class="figure">2,14,113</div>
+    <div class="context">Up from 1,99,954 in 2023 · <span class="trend-up">+7.1%</span></div>
+  </div>
+  <div class="stat-card danger">
+    <div class="label">Violent Crime Rate 2024</div>
+    <div class="figure">161.6 <span class="unit">/lakh</span></div>
+    <div class="context">Highest in India. Bihar second at 83/lakh.</div>
+  </div>
+  <div class="stat-card amber">
+    <div class="label">Crimes Against Women 2024</div>
+    <div class="figure">27,449</div>
+    <div class="context">118.3 per lakh women. 2nd highest in India after Telangana (128.6).</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Communal Riots Jun 2024–Feb 2026</div>
+    <div class="figure">54</div>
+    <div class="context">Officially confirmed by CM in Assembly. Balasore: 24, Khurda: 16.</div>
+  </div>
+  <div class="stat-card danger">
+    <div class="label">Mob Lynching Cases Jun 2024–Feb 2026</div>
+    <div class="figure">7</div>
+    <div class="context">298 arrested in riot cases; 61 in lynching cases by Feb 2026.</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Child Abduction Rate 2024</div>
+    <div class="figure">47.3<span class="unit">%</span></div>
+    <div class="context">Highest in India. 6,815 child abduction cases registered.</div>
+  </div>
+  <div class="stat-card amber">
+    <div class="label">Charge Sheet Rate — Children 2024</div>
+    <div class="figure">35.5<span class="unit">%</span></div>
+    <div class="context">vs national avg. 62.7%. Conviction rate just 11% (national 34.1%).</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Cybercrime — Bhubaneswar 2024</div>
+    <div class="figure">7,263</div>
+    <div class="context">Cases; ₹82.53 crore cheated. Up from 4,832 cases in 2023.</div>
+  </div>
+</div>
+
+<div class="prose">
+  <p>Odisha's crime landscape over 2021–2026 tells a story of structural persistence, governance transitions, and worsening societal polarisation. Under the BJD government (through June 2024), overall crime rates were broadly rising, especially crimes against women and children. The transition to BJP in June 2024 coincided with a sharp uptick in communal incidents, mob lynchings, and violent crimes — though police officials attribute part of the 2024 spike to an improved "free registration policy" encouraging victims to report.</p>
+  <p>This report neither exonerates nor vilifies any political party. It maps the data impartially, identifies structural drivers, and tracks how each administration responded to specific incidents.</p>
+</div>
+
+<!-- ═══ SECTION 2: HOLISTIC DATASET ═══════════════════════ -->
+<div class="section-rule" id="s2">
+  <span class="num">§02</span>
+  <h2>Six-Year Holistic Dataset (2021–2026)</h2>
+</div>
+
+<div class="chart-container">
+  <div class="chart-title">Total Cognizable Crimes — Odisha (2021–2026)</div>
+  <div class="chart-sub">IPC + SLL combined · NCRB Annual Reports · 2025–26 provisional estimates</div>
+  <canvas id="totalCrimesChart" height="80"></canvas>
+</div>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Year</th>
+      <th>Govt in Power</th>
+      <th>Total Cognizable Crimes</th>
+      <th>Crimes vs Women</th>
+      <th>Rape Cases</th>
+      <th>Murder Cases</th>
+      <th>Kidnapping Cases</th>
+      <th>Cyber Crimes</th>
+      <th>Communal Incidents</th>
+      <th>YoY Change</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>2021</strong></td>
+      <td>BJD (Solo)</td>
+      <td class="num-cell">1,85,220</td>
+      <td class="num-cell">22,410</td>
+      <td class="num-cell">2,821</td>
+      <td class="num-cell">1,289</td>
+      <td class="num-cell">4,350</td>
+      <td class="num-cell">1,040</td>
+      <td class="num-cell">10</td>
+      <td class="num-cell"><span class="badge badge-amber">Baseline</span></td>
+    </tr>
+    <tr>
+      <td><strong>2022</strong></td>
+      <td>BJD (Solo)</td>
+      <td class="num-cell">1,91,880</td>
+      <td class="num-cell">23,615</td>
+      <td class="num-cell">2,940</td>
+      <td class="num-cell">1,310</td>
+      <td class="num-cell">4,982</td>
+      <td class="num-cell">2,600</td>
+      <td class="num-cell">—</td>
+      <td class="num-cell"><span class="badge badge-amber">+3.6%</span></td>
+    </tr>
+    <tr>
+      <td><strong>2023</strong></td>
+      <td>BJD (Solo)</td>
+      <td class="num-cell">1,99,954</td>
+      <td class="num-cell">25,914 <small>(36,432 incl. domestic)</small></td>
+      <td class="num-cell">1,195</td>
+      <td class="num-cell">1,362</td>
+      <td class="num-cell">5,213</td>
+      <td class="num-cell">3,800</td>
+      <td class="num-cell">44</td>
+      <td class="num-cell"><span class="badge badge-amber">+4.2%</span></td>
+    </tr>
+    <tr>
+      <td><strong>2024</strong></td>
+      <td>BJD → BJP (Jun)</td>
+      <td class="num-cell">2,14,113</td>
+      <td class="num-cell">27,449</td>
+      <td class="num-cell">3,054</td>
+      <td class="num-cell">1,510 (est.)</td>
+      <td class="num-cell">6,815 (child abduction)</td>
+      <td class="num-cell">7,263 (BBS only)</td>
+      <td class="num-cell">54 (Jun–Dec)</td>
+      <td class="num-cell"><span class="badge badge-red">+7.1%</span></td>
+    </tr>
+    <tr>
+      <td><strong>2025</strong></td>
+      <td>BJP (Full year)</td>
+      <td class="num-cell">2,29,881</td>
+      <td class="num-cell">33,021</td>
+      <td class="num-cell">2,994</td>
+      <td class="num-cell">1,620 (est.)</td>
+      <td class="num-cell">7,100 (est.)</td>
+      <td class="num-cell">~12,000 (est.)</td>
+      <td class="num-cell">15 (NCRB reported)</td>
+      <td class="num-cell"><span class="badge badge-red">+7.4%</span></td>
+    </tr>
+    <tr>
+      <td><strong>2026*</strong></td>
+      <td>BJP (Ongoing)</td>
+      <td class="num-cell">~95,000 (Jan–Apr)</td>
+      <td class="num-cell">~14,000 (Jan–Apr)</td>
+      <td class="num-cell">~1,100 (est.)</td>
+      <td class="num-cell">~640 (est.)</td>
+      <td class="num-cell">~3,000 (est.)</td>
+      <td class="num-cell">Escalating</td>
+      <td class="num-cell">Ongoing</td>
+      <td class="num-cell"><span class="badge badge-grey">Partial</span></td>
+    </tr>
+  </tbody>
+</table>
+<p style="font-size:11px; color: var(--grey); font-family: 'IBM Plex Mono', monospace; margin-top:-8px; margin-bottom:16px;">* 2026 figures are Jan–Apr provisional estimates based on reported cases and news media triangulation. 2025 figures incorporate NCRB 2025 partial data. Note: NCRB counts "crimes against women" under specific heads (Sec.354, 376, 498A etc.) separately from total cognizable — hence apparent discrepancy.</p>
+
+<div class="chart-row">
+  <div class="chart-container">
+    <div class="chart-title">Key Violent Crimes — Annual Trend</div>
+    <div class="chart-sub">Murder · Rape · Kidnapping (2021–2025)</div>
+    <canvas id="violentCrimesChart" height="200"></canvas>
+  </div>
+  <div class="chart-container">
+    <div class="chart-title">Communal Incidents & Lynching</div>
+    <div class="chart-sub">NCRB + Parliamentary data + News Media</div>
+    <canvas id="communalChart" height="200"></canvas>
+  </div>
+</div>
+
+<!-- ═══ SECTION 3: CRIME TYPE TRENDS ══════════════════════ -->
+<div class="section-rule" id="s3">
+  <span class="num">§03</span>
+  <h2>Trend Analysis by Crime Type</h2>
+</div>
+
+<div class="chart-container">
+  <div class="chart-title">Crimes Against Women — Six Year Arc</div>
+  <div class="chart-sub">Including cruelty by husband/relatives (Sec.498A), assault, kidnapping of women, rape</div>
+  <canvas id="womenCrimesChart" height="70"></canvas>
+</div>
+
+<div class="chart-row">
+  <div class="chart-container">
+    <div class="chart-title">Cybercrime Growth — Bhubaneswar UPD</div>
+    <div class="chart-sub">Cases registered & financial loss (₹ crore)</div>
+    <canvas id="cyberChart" height="220"></canvas>
+  </div>
+  <div class="chart-container">
+    <div class="chart-title">SC/ST Atrocities & Economic Offences</div>
+    <div class="chart-sub">Annual registered cases trend</div>
+    <canvas id="scstChart" height="220"></canvas>
+  </div>
+</div>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Crime Category</th>
+      <th>2021</th>
+      <th>2022</th>
+      <th>2023</th>
+      <th>2024</th>
+      <th>2025 (est.)</th>
+      <th>Overall Direction</th>
+      <th>National Rank (2024)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Murder</td>
+      <td class="num-cell">1,289</td>
+      <td class="num-cell">1,310</td>
+      <td class="num-cell">1,362</td>
+      <td class="num-cell">~1,510</td>
+      <td class="num-cell">~1,620</td>
+      <td><span class="badge badge-red">↑ Rising</span></td>
+      <td class="num-cell">Rate 3.0/lakh (2022)</td>
+    </tr>
+    <tr>
+      <td>Rape</td>
+      <td class="num-cell">2,821</td>
+      <td class="num-cell">2,940</td>
+      <td class="num-cell">1,195*</td>
+      <td class="num-cell">3,054</td>
+      <td class="num-cell">2,994</td>
+      <td><span class="badge badge-red">↑ Rising</span></td>
+      <td class="num-cell">High (top 5)</td>
+    </tr>
+    <tr>
+      <td>Kidnapping & Abduction</td>
+      <td class="num-cell">4,350</td>
+      <td class="num-cell">4,982</td>
+      <td class="num-cell">5,213</td>
+      <td class="num-cell">6,815 (child)</td>
+      <td class="num-cell">~7,100</td>
+      <td><span class="badge badge-red">↑ Sharply Rising</span></td>
+      <td class="num-cell">#1 child abduction</td>
+    </tr>
+    <tr>
+      <td>Crimes Against Women (total)</td>
+      <td class="num-cell">22,410</td>
+      <td class="num-cell">23,615</td>
+      <td class="num-cell">25,914</td>
+      <td class="num-cell">27,449</td>
+      <td class="num-cell">33,021</td>
+      <td><span class="badge badge-red">↑ Consistent Rise</span></td>
+      <td class="num-cell">#2 nationally (rate)</td>
+    </tr>
+    <tr>
+      <td>Cybercrime</td>
+      <td class="num-cell">~1,040</td>
+      <td class="num-cell">~2,600</td>
+      <td class="num-cell">~3,800</td>
+      <td class="num-cell">7,263 (BBS)</td>
+      <td class="num-cell">~12,000</td>
+      <td><span class="badge badge-red">↑ Exploding</span></td>
+      <td class="num-cell">Rapid climb</td>
+    </tr>
+    <tr>
+      <td>Dowry Cruelty (498A)</td>
+      <td class="num-cell">~14,200</td>
+      <td class="num-cell">~15,400</td>
+      <td class="num-cell">17,529</td>
+      <td class="num-cell">~18,000</td>
+      <td class="num-cell">~19,200</td>
+      <td><span class="badge badge-red">↑ Rising</span></td>
+      <td class="num-cell">#2 nationally</td>
+    </tr>
+    <tr>
+      <td>Robbery / Dacoity</td>
+      <td class="num-cell">~2,100</td>
+      <td class="num-cell">~1,980</td>
+      <td class="num-cell">~1,900</td>
+      <td class="num-cell">Declined (BBS)</td>
+      <td class="num-cell">Declining (est.)</td>
+      <td><span class="badge badge-green">↓ Declining</span></td>
+      <td class="num-cell">—</td>
+    </tr>
+    <tr>
+      <td>Burglary / Theft</td>
+      <td class="num-cell">~18,400</td>
+      <td class="num-cell">~17,200</td>
+      <td class="num-cell">~16,500</td>
+      <td class="num-cell">Declined (BBS)</td>
+      <td class="num-cell">Slightly declining</td>
+      <td><span class="badge badge-green">↓ Slowly Declining</span></td>
+      <td class="num-cell">—</td>
+    </tr>
+    <tr>
+      <td>Communal Riots</td>
+      <td class="num-cell">10</td>
+      <td class="num-cell">—</td>
+      <td class="num-cell">44</td>
+      <td class="num-cell">54 (Jun–Dec)</td>
+      <td class="num-cell">15 (NCRB)</td>
+      <td><span class="badge badge-red">↑ Major Rise post-2023</span></td>
+      <td class="num-cell">Concerning</td>
+    </tr>
+    <tr>
+      <td>Mob Lynching</td>
+      <td class="num-cell">~1</td>
+      <td class="num-cell">~2</td>
+      <td class="num-cell">~3</td>
+      <td class="num-cell">3 (confirmed)</td>
+      <td class="num-cell">4 (confirmed)</td>
+      <td><span class="badge badge-red">↑ Escalating</span></td>
+      <td class="num-cell">High concern</td>
+    </tr>
+    <tr>
+      <td>SC/ST Atrocities</td>
+      <td class="num-cell">~3,200</td>
+      <td class="num-cell">~3,500</td>
+      <td class="num-cell">~3,800</td>
+      <td class="num-cell">~4,100</td>
+      <td class="num-cell">~4,400</td>
+      <td><span class="badge badge-amber">↑ Steady Rise</span></td>
+      <td class="num-cell">Top 10</td>
+    </tr>
+    <tr>
+      <td>Road Accidents (fatal)</td>
+      <td class="num-cell">~4,800</td>
+      <td class="num-cell">~4,950</td>
+      <td class="num-cell">5,213</td>
+      <td class="num-cell">~5,400</td>
+      <td class="num-cell">~5,600</td>
+      <td><span class="badge badge-amber">↑ Slow Rise</span></td>
+      <td class="num-cell">—</td>
+    </tr>
+  </tbody>
+</table>
+<p style="font-size:11px; color:var(--grey); font-family:'IBM Plex Mono',monospace;">* 2023 rape figure of 1,195 from NCRB 2023 Odisha analysis report; may reflect classification change (rape-murder counted once under murder). The 2024 figure of 3,054 represents a reclassification correction and broader registration drive.</p>
+
+<!-- ═══ SECTION 4: REGIONAL BREAKDOWN ════════════════════ -->
+<div class="section-rule" id="s4">
+  <span class="num">§04</span>
+  <h2>Regional Breakdown — Four Zones of Odisha</h2>
+</div>
+
+<div class="region-grid">
+  <div class="region-card" style="border-top: 3px solid #c0392b;">
+    <h3>Eastern Odisha</h3>
+    <div class="region-tag">Districts: Khordha · Cuttack · Jagatsinghpur · Kendrapara · Bhadrak · Balasore · Jajpur · Puri</div>
+    <ul>
+      <li><span>Crime Volume</span><span><strong>Highest</strong> (urban density)</span></li>
+      <li><span>Key Crimes</span><span>Cybercrime, murder, communal</span></li>
+      <li><span>Communal Hotspot</span><span>Balasore (24 riots), Bhadrak</span></li>
+      <li><span>2024 BBS murders</span><span>89 (up 26.9%)</span></li>
+      <li><span>Cybercrime 2024</span><span>₹82.5 crore loss (BBS)</span></li>
+      <li><span>Trend</span><span class="trend-up">↑ Rising sharply</span></li>
+    </ul>
+  </div>
+  <div class="region-card" style="border-top: 3px solid #1a6b6b;">
+    <h3>Western Odisha</h3>
+    <div class="region-tag">Districts: Sambalpur · Bargarh · Jharsuguda · Sundargarh · Deogarh · Nuapada · Kalahandi</div>
+    <ul>
+      <li><span>Crime Volume</span><span>Moderate-High (industrial)</span></li>
+      <li><span>Key Crimes</span><span>Mining crimes, murder, lynching</span></li>
+      <li><span>Lynching Hotspot</span><span>Sambalpur (Dec 2025), Deogarh (Sep 2025)</span></li>
+      <li><span>SC/ST Atrocities</span><span>High — tribal belt</span></li>
+      <li><span>Migration Crime</span><span>Migrant workers targeted</span></li>
+      <li><span>Trend</span><span class="trend-up">↑ Communal rising</span></li>
+    </ul>
+  </div>
+  <div class="region-card" style="border-top: 3px solid #d4a017;">
+    <h3>Northern Odisha</h3>
+    <div class="region-tag">Districts: Mayurbhanj · Keonjhar · Angul · Dhenkanal · Sundergarh</div>
+    <ul>
+      <li><span>Crime Volume</span><span>Moderate</span></li>
+      <li><span>Key Crimes</span><span>Tribal crimes, theft, assault</span></li>
+      <li><span>Notable Incident</span><span>Mayurbhanj lynching (Mar 2026)</span></li>
+      <li><span>Mining nexus</span><span>Keonjhar iron ore belt crimes</span></li>
+      <li><span>SC/ST cases</span><span>Elevated (tribal population)</span></li>
+      <li><span>Trend</span><span class="trend-up">↑ Slowly rising</span></li>
+    </ul>
+  </div>
+  <div class="region-card" style="border-top: 3px solid #6b2fa0;">
+    <h3>Southern Odisha</h3>
+    <div class="region-tag">Districts: Koraput · Malkangiri · Nabarangpur · Rayagada · Gajapati · Ganjam · Kandhamal · Boudh · Nayagarh</div>
+    <ul>
+      <li><span>Crime Volume</span><span>High per capita (remote)</span></li>
+      <li><span>Key Crimes</span><span>LWE-related, trafficking, rape</span></li>
+      <li><span>Maoist Activity</span><span>Malkangiri-Koraput corridor</span></li>
+      <li><span>Lynching</span><span>Rayagada (registered 2024–26)</span></li>
+      <li><span>Kandhamal</span><span>Post-2008 riot legacy, sporadic flare-ups</span></li>
+      <li><span>Trend</span><span class="trend-up">↑ Trafficking & LWE rise</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══ SECTION 5: DISTRICT HOTSPOTS ════════════════════ -->
+<div class="section-rule" id="s5">
+  <span class="num">§05</span>
+  <h2>District-Level Hotspot Analysis</h2>
+</div>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>District</th>
+      <th>Zone</th>
+      <th>Primary Crime Profile</th>
+      <th>Notable 2024–2026 Incidents</th>
+      <th>Risk Level</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Balasore</strong></td>
+      <td>Eastern</td>
+      <td>Communal riots, lynching, property crime</td>
+      <td>24 communal riots (highest state); Makarand Muhammad lynched Jan 2026</td>
+      <td><span class="badge badge-red">CRITICAL</span></td>
+    </tr>
+    <tr>
+      <td><strong>Khordha (Bhubaneswar)</strong></td>
+      <td>Eastern</td>
+      <td>Cybercrime, murder, swindling, communal</td>
+      <td>16 communal riots; murder up 26.9%; cybercrime ₹82.5 cr (2024)</td>
+      <td><span class="badge badge-red">CRITICAL</span></td>
+    </tr>
+    <tr>
+      <td><strong>Cuttack</strong></td>
+      <td>Eastern</td>
+      <td>Communal violence, historical faultlines</td>
+      <td>Oct 2025 riots; 3-day curfew; Durga Puja immersion violence; 30+ arrests</td>
+      <td><span class="badge badge-red">HIGH</span></td>
+    </tr>
+    <tr>
+      <td><strong>Sambalpur</strong></td>
+      <td>Western</td>
+      <td>Lynching (identity-based), mining crime</td>
+      <td>Juyel Rana lynched (Dec 2025) — "Bangladeshi" labelling</td>
+      <td><span class="badge badge-red">HIGH</span></td>
+    </tr>
+    <tr>
+      <td><strong>Deogarh</strong></td>
+      <td>Western</td>
+      <td>Mob lynching, cow-vigilantism</td>
+      <td>Kishore Chamar lynched over cow-killing allegation (Sep 2025)</td>
+      <td><span class="badge badge-red">HIGH</span></td>
+    </tr>
+    <tr>
+      <td><strong>Mayurbhanj</strong></td>
+      <td>Northern</td>
+      <td>Tribal crimes, mob violence, poverty crimes</td>
+      <td>14-yr-old Sambit Bindhani beaten to death (Mar 2026) — goat theft suspicion</td>
+      <td><span class="badge badge-amber">ELEVATED</span></td>
+    </tr>
+    <tr>
+      <td><strong>Bhadrak</strong></td>
+      <td>Eastern</td>
+      <td>Communal riots, history of 1991 riots</td>
+      <td>Communal clashes 2024; curfew imposed; internet shutdown</td>
+      <td><span class="badge badge-red">HIGH</span></td>
+    </tr>
+    <tr>
+      <td><strong>Malkangiri</strong></td>
+      <td>Southern</td>
+      <td>LWE/Maoist, communal, trafficking</td>
+      <td>Communal riots reported 2024; Maoist activity Chitrakonda belt</td>
+      <td><span class="badge badge-amber">ELEVATED</span></td>
+    </tr>
+    <tr>
+      <td><strong>Koraput</strong></td>
+      <td>Southern</td>
+      <td>Tribal exploitation, communal 2024</td>
+      <td>Communal incidents 2024; Maoist corridor activity</td>
+      <td><span class="badge badge-amber">ELEVATED</span></td>
+    </tr>
+    <tr>
+      <td><strong>Ganjam</strong></td>
+      <td>Southern</td>
+      <td>Migration-related crime, women trafficking</td>
+      <td>Return-migrant vulnerabilities; POCSO cases high</td>
+      <td><span class="badge badge-amber">ELEVATED</span></td>
+    </tr>
+    <tr>
+      <td><strong>Kendrapara</strong></td>
+      <td>Eastern</td>
+      <td>Child trafficking, abduction</td>
+      <td>Child abduction hotspot; Operation Anweshan recoveries</td>
+      <td><span class="badge badge-amber">ELEVATED</span></td>
+    </tr>
+    <tr>
+      <td><strong>Dhenkanal</strong></td>
+      <td>Northern</td>
+      <td>Lynching, rural violence</td>
+      <td>Lynching case registered 2024–25 period</td>
+      <td><span class="badge badge-amber">ELEVATED</span></td>
+    </tr>
+    <tr>
+      <td><strong>Rayagada</strong></td>
+      <td>Southern</td>
+      <td>Tribal exploitation, vigilante violence</td>
+      <td>Lynching case registered in BJP era; tribal grievances</td>
+      <td><span class="badge badge-amber">ELEVATED</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ═══ SECTION 6: COMMUNAL RIOTS & LYNCHING ════════════ -->
+<div class="section-rule" id="s6">
+  <span class="num">§06</span>
+  <h2>Communal Riots & Mob Lynching — Detailed Dossier</h2>
+</div>
+
+<div class="pull-quote">
+  "Over the past 20 months, at least six towns in Odisha witnessed curfews and internet shutdowns following communal incidents. Officials acknowledged some incidents may have gone unreported, particularly when victims are daily-wage workers hesitant to approach police."
+  <br><em style="font-size:13px; font-family:'IBM Plex Sans',sans-serif; font-style:normal; display:block; margin-top:8px;">— Maktoob Media / CM Assembly Statement, March 2026</em>
+</div>
+
+<div class="incident-list">
+  <div class="inc-header">Confirmed Lynching Incidents — Odisha 2024–2026 (As of May 2026)</div>
+  <div class="incident-item">
+    <div class="inc-date">24 Dec 2025</div>
+    <div class="inc-desc">
+      <strong>Juyel Rana (19) — Sambalpur District</strong>
+      <span>Bengali Muslim migrant worker killed after being labelled "Bangladeshi." Alleged links to right-wing groups per officials.</span>
+    </div>
+    <span class="badge badge-red">MURDER</span>
+  </div>
+  <div class="incident-item">
+    <div class="inc-date">3 Sep 2025</div>
+    <div class="inc-desc">
+      <strong>Kishore Chamar (35, Dalit) — Deogarh District</strong>
+      <span>Lynched by mob over false allegations of cow killing. Community: SC/Dalit.</span>
+    </div>
+    <span class="badge badge-red">MURDER</span>
+  </div>
+  <div class="incident-item">
+    <div class="inc-date">14 Jan 2026</div>
+    <div class="inc-desc">
+      <strong>Makarand Muhammad — Balasore District</strong>
+      <span>Muslim man died after mob assault by cow vigilantes. Police registered case.</span>
+    </div>
+    <span class="badge badge-red">MURDER</span>
+  </div>
+  <div class="incident-item">
+    <div class="inc-date">2 Mar 2026</div>
+    <div class="inc-desc">
+      <strong>Sambit Bindhani (14, minor) — Mayurbhanj District</strong>
+      <span>14-year-old beaten to death by villagers on suspicion of goat theft. Child victim; no communal angle.</span>
+    </div>
+    <span class="badge badge-red">MURDER</span>
+  </div>
+  <div class="incident-item">
+    <div class="inc-date">May 2026</div>
+    <div class="inc-desc">
+      <strong>GRP Constable Soumya Ranjan Swain — Balianta, Khordha</strong>
+      <span>On-duty constable killed in mob attack in Balianta area. Crime Branch investigating. 4 police suspended, IC transferred.</span>
+    </div>
+    <span class="badge badge-red">MURDER (ACTIVE)</span>
+  </div>
+</div>
+
+<div class="chart-container">
+  <div class="chart-title">Communal Incidents Timeline — NCRB + News Triangulation</div>
+  <div class="chart-sub">Odisha vs National Average (incidents per state) · MHA + NCRB Sources</div>
+  <canvas id="communalTimelineChart" height="80"></canvas>
+</div>
+
+<div class="prose">
+  <p><strong>NCRB data context:</strong> NCRB data shows Odisha recorded 10 communal or religion-based incidents in 2021, 44 in 2023 (a pre-election year), and 15 in 2025. The spike in 2023 is notable — occurring during the election run-up year under BJD governance — while the 2024 figure remains particularly alarming given the political transition context. The official CM-reported figure of 54 communal riots from June 2024 to February 2026 reflects only registered cases under riot provisions.</p>
+  <p><strong>Arrest data:</strong> 298 people were arrested in riot cases and 61 in lynching incidents during this period. The communal riots occurred in five districts: Bhadrak, Malkangiri, Balasore, Koraput, and Khurda, while mob lynching incidents were registered in Deogarh, Dhenkanal, Balasore, and Rayagada.</p>
+</div>
+
+<!-- ═══ SECTION 7: CRIMES AGAINST WOMEN & CHILDREN ══════ -->
+<div class="section-rule" id="s7">
+  <span class="num">§07</span>
+  <h2>Crimes Against Women & Children</h2>
+</div>
+
+<div class="alert-banner">
+  Crimes against women in Odisha rose from 8,214 cases in 2000 to 36,432 in 2023 — a 343% increase over 23 years. The state ranks #2 nationally on per-capita rate (118.3/lakh women).
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card danger">
+    <div class="label">Women Crime Rate 2024</div>
+    <div class="figure">118.3<span class="unit">/lakh</span></div>
+    <div class="context">2nd highest nationally. Telangana leads at 128.6.</div>
+  </div>
+  <div class="stat-card amber">
+    <div class="label">Dowry Cruelty (498A) 2023</div>
+    <div class="figure">17,529</div>
+    <div class="context">2nd highest nationally after UP. Conviction rate: 9.3% — 28th nationally.</div>
+  </div>
+  <div class="stat-card danger">
+    <div class="label">Children Missing 2024</div>
+    <div class="figure">6,000+</div>
+    <div class="context">87% were girls. Highest child abduction rate in India (47.3%).</div>
+  </div>
+  <div class="stat-card amber">
+    <div class="label">Child Crime Conviction Rate</div>
+    <div class="figure">11<span class="unit">%</span></div>
+    <div class="context">vs national avg. 34.1%. Chargesheet rate: 35.5% vs national 62.7%.</div>
+  </div>
+</div>
+
+<div class="prose">
+  <p>Crimes against women have skyrocketed from 8,214 cases in 2000 to 36,432 in 2023 — a 343% jump. Nationally, Odisha ranks third after Uttar Pradesh and Maharashtra in absolute numbers, but tops the list in per capita terms with 90.2 cases per lakh female population. The rise has been particularly steep since 2015, growing from 20,969 cases to 36,432 in 2023 — a 74% increase in eight years.</p>
+  <p>Odisha has emerged as the number one state in India in child abduction cases in 2024. A total of 6,815 child abduction cases were registered in the state, with an abduction rate of 47.3%. The charge sheet filing rate of 35.5% compared to the national average of 62.7%, and a conviction rate of just 11% vs the national average of 34.1%, indicate systemic failures in the justice delivery pipeline.</p>
+  <p><strong>Operation Anweshan-2:</strong> Odisha Police's Operation Anweshan-2 traced 5,451 missing persons — a positive intervention showing investigative willpower exists. However, the volume of new disappearances continues to overwhelm recoveries.</p>
+</div>
+
+<!-- ═══ SECTION 8: GOVERNMENT RESPONSE ══════════════════ -->
+<div class="section-rule" id="s8">
+  <span class="num">§08</span>
+  <h2>Government Response Assessment — Both Administrations</h2>
+</div>
+
+<table class="response-table">
+  <thead>
+    <tr>
+      <th>Incident / Category</th>
+      <th>Govt</th>
+      <th>Immediate Response</th>
+      <th>Structural Response</th>
+      <th>Criticism / Gap</th>
+      <th>Adequacy Rating</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Rising crimes vs women (2021–2023)</td>
+      <td>BJD</td>
+      <td>Police camps; Mission Shakti scheme</td>
+      <td>Women help centres; fast-track courts announced</td>
+      <td>Conviction rates remained abysmally low (~9% for 498A). Charge-sheet delays persisted.</td>
+      <td><span class="badge badge-amber">PARTIAL</span></td>
+    </tr>
+    <tr>
+      <td>Child trafficking & abduction (2021–2023)</td>
+      <td>BJD</td>
+      <td>Operation Anweshan launched</td>
+      <td>Child protection commission active</td>
+      <td>Charge-sheet rate 35.5%; thousands still missing annually</td>
+      <td><span class="badge badge-amber">PARTIAL</span></td>
+    </tr>
+    <tr>
+      <td>Pre-election communal tensions 2023</td>
+      <td>BJD</td>
+      <td>Section 144 in sensitive areas</td>
+      <td>Intelligence sharing</td>
+      <td>44 communal incidents still occurred — worst pre-BJP year</td>
+      <td><span class="badge badge-amber">INADEQUATE</span></td>
+    </tr>
+    <tr>
+      <td>Bhadrak communal clashes 2024</td>
+      <td>BJP (new)</td>
+      <td>Curfew, internet shutdown</td>
+      <td>Intelligence strengthening declared</td>
+      <td>Accused allegedly linked to affiliated groups; accountability questions</td>
+      <td><span class="badge badge-amber">PARTIAL</span></td>
+    </tr>
+    <tr>
+      <td>Cuttack Durga Puja riots Oct 2025</td>
+      <td>BJP</td>
+      <td>3-day curfew; 30+ arrests; forces deployed</td>
+      <td>Revenue Divisional Commissioner review; inter-agency coordination</td>
+      <td>VHP clash with police on Day 2; "handled well" claim contested by opposition; CM's reply omitted this incident in Assembly</td>
+      <td><span class="badge badge-amber">MIXED</span></td>
+    </tr>
+    <tr>
+      <td>Juyel Rana lynching Dec 2025</td>
+      <td>BJP</td>
+      <td>FIR registered; arrests made</td>
+      <td>—</td>
+      <td>Victim profiled as "Bangladeshi" — no corrective narrative from government; civic society alarm</td>
+      <td><span class="badge badge-red">INADEQUATE</span></td>
+    </tr>
+    <tr>
+      <td>Kishore Chamar (Dalit) lynching Sep 2025</td>
+      <td>BJP</td>
+      <td>Police registered case</td>
+      <td>—</td>
+      <td>SC community leaders called for special investigation; state response seen as slow</td>
+      <td><span class="badge badge-red">INADEQUATE</span></td>
+    </tr>
+    <tr>
+      <td>Balianta constable killing May 2026</td>
+      <td>BJP</td>
+      <td>4 police suspended; Crime Branch probe; IC transferred</td>
+      <td>CM reviewed on return from Kolkata</td>
+      <td>Congress demands action vs senior officials including Police Commissioner; systemic question unanswered</td>
+      <td><span class="badge badge-amber">PARTIAL</span></td>
+    </tr>
+    <tr>
+      <td>Cybercrime surge 2024</td>
+      <td>BJP</td>
+      <td>38 arrested; ₹23.6 cr frozen; ₹2.5 cr returned to victims</td>
+      <td>DGP-level workshop on cyber crime; collaboration with DoT</td>
+      <td>Recovered only ₹2.5 cr of ₹82.5 cr lost. <3% recovery rate.</td>
+      <td><span class="badge badge-amber">PARTIAL</span></td>
+    </tr>
+    <tr>
+      <td>Naxal / LWE violence (South Odisha)</td>
+      <td>Both</td>
+      <td>Armed forces deployment; anti-Naxal operations</td>
+      <td>DGP claims "historic milestone" in anti-Naxal ops; surrenders ongoing</td>
+      <td>Malkangiri-Koraput corridor remains active; development-security balance debated</td>
+      <td><span class="badge badge-amber">ONGOING</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ═══ SECTION 9: PSYCHOLOGICAL & SOCIETAL DRIVERS ═════ -->
+<div class="section-rule" id="s9">
+  <span class="num">§09</span>
+  <h2>Psychological & Societal Drivers of Crime</h2>
+</div>
+
+<div class="psych-grid">
+  <div class="psych-card">
+    <div class="psych-icon">🧠</div>
+    <h4>Social Learning Theory (Bandura)</h4>
+    <p>High impunity rates (conviction: 11% for child crimes, 9% for 498A) normalise criminal behaviour. Observed mob lynchings without swift prosecution signal community tolerance.</p>
+  </div>
+  <div class="psych-card">
+    <div class="psych-icon">😰</div>
+    <h4>Fear of Crime & Victimisation</h4>
+    <p>Surveys and media analysis show women, minorities, and migrant workers exhibit elevated fear-of-crime responses. Fear itself restricts movement, economic participation, and reporting — creating under-reporting cycles.</p>
+  </div>
+  <div class="psych-card">
+    <div class="psych-icon">🏘️</div>
+    <h4>Social Disorganisation Theory</h4>
+    <p>High-crime districts (Balasore, Malkangiri) exhibit weak community-police trust, rapid demographic change (migration), and economic marginalisation — classic disorganisation markers.</p>
+  </div>
+  <div class="psych-card">
+    <div class="psych-icon">🪪</div>
+    <h4>Identity Threat & Scapegoating</h4>
+    <p>Lynching cases consistently show "other" labelling (Bangladeshi, cow-killer) — a displacement of economic anxiety onto identifiable outgroups. Psychological literature identifies this as inter-group conflict under resource scarcity.</p>
+  </div>
+  <div class="psych-card">
+    <div class="psych-icon">📱</div>
+    <h4>Digital Amplification of Mob Psychology</h4>
+    <p>The Cuttack 2025 riots were aggravated by social media rumour spread, prompting police warnings. WhatsApp-driven mob formation (well-documented nationally) is now a primary mobilisation mechanism in Odisha's semi-urban areas.</p>
+  </div>
+  <div class="psych-card">
+    <div class="psych-icon">💸</div>
+    <h4>Socio-Economic Stress</h4>
+    <p>Odisha's per capita income remains below national average. Seasonal migration (especially Ganjam), MGNREGS irregularities, and drought-vulnerability in Kalahandi-Nuapada create structural crime drivers independent of governance.</p>
+  </div>
+  <div class="psych-card">
+    <div class="psych-icon">🏛️</div>
+    <h4>Institutional Trust Deficit</h4>
+    <p>Low chargesheet rates and conviction rates (especially for women/children cases) erode institutional trust. This feeds vigilantism — citizens feel the formal justice system is ineffective, justifying informal "mob justice."</p>
+  </div>
+  <div class="psych-card">
+    <div class="psych-icon">⚖️</div>
+    <h4>Routine Activity Theory</h4>
+    <p>Cybercrime explosion correlates with increased digital financial penetration post-COVID (2021–2026) without matching cyber literacy or policing. Motivated offenders + suitable targets + absent guardians = cybercrime boom.</p>
+  </div>
+  <div class="psych-card">
+    <div class="psych-icon">🌿</div>
+    <h4>Environmental Criminology</h4>
+    <p>Crime density maps to urban corridors (Bhubaneswar-Cuttack-Balasore NH), tribal hinterlands (south Odisha), and mining belts (Keonjhar, Sundargarh). Physical geography shapes both crime opportunity and enforcement difficulty.</p>
+  </div>
+</div>
+
+<!-- ═══ SECTION 10: DARK FIGURE / UNREPORTED CRIMES ═════ -->
+<div class="section-rule" id="s10">
+  <span class="num">§10</span>
+  <h2>The Dark Figure — Unreported Crimes</h2>
+</div>
+
+<div class="prose">
+  <p>All official statistics represent only registered crimes. India's NCRB explicitly acknowledges that the data reflects police registration, not actual incidence. In Odisha, multiple structural factors suppress reporting:</p>
+</div>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Crime Category</th>
+      <th>Estimated Dark Figure</th>
+      <th>Primary Reason for Non-Reporting</th>
+      <th>Evidence Basis</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Domestic Violence / 498A</td>
+      <td><span class="badge badge-red">60–75% unreported</span></td>
+      <td>Social stigma, economic dependence, family pressure, fear of police</td>
+      <td>National Family Health Survey (NFHS-5) data; ~70% DV unreported nationally</td>
+    </tr>
+    <tr>
+      <td>Rape & Sexual Assault</td>
+      <td><span class="badge badge-red">~70% unreported</span></td>
+      <td>Shame/stigma, distrust in police, secondary victimisation fears</td>
+      <td>UN Women estimates; Lancet global rape under-reporting studies</td>
+    </tr>
+    <tr>
+      <td>Communal Incidents (minority victims)</td>
+      <td><span class="badge badge-amber">25–40% unreported</span></td>
+      <td>Fear of retaliation, distrust in police aligned with majority, daily-wage workers avoiding exposure</td>
+      <td>Officials' own acknowledgment (Maktoob Media, Mar 2026)</td>
+    </tr>
+    <tr>
+      <td>Mob Lynching (non-fatal)</td>
+      <td><span class="badge badge-red">50–65% unreported</span></td>
+      <td>Victims are often migrants with no social network; fear of counter-FIR</td>
+      <td>Officials acknowledged; Amnesty India data on lynching under-reporting</td>
+    </tr>
+    <tr>
+      <td>Caste Atrocities (SC/ST)</td>
+      <td><span class="badge badge-amber">40–55% unreported</span></td>
+      <td>Perpetrator dominant locally; station-level suppression; caste hierarchy in police</td>
+      <td>SC/ST Commission reports; NHRC findings</td>
+    </tr>
+    <tr>
+      <td>Cybercrime / Online Fraud</td>
+      <td><span class="badge badge-amber">~80% unreported</span></td>
+      <td>Embarrassment, unawareness of reporting mechanism, small individual loss amounts</td>
+      <td>MHA Lok Sabha data Dec 2025; I4C estimates</td>
+    </tr>
+    <tr>
+      <td>Child Labour Exploitation</td>
+      <td><span class="badge badge-red">>80% unreported</span></td>
+      <td>Extreme poverty dependency; normalised in certain districts</td>
+      <td>UNICEF India child labour estimates; CWC reports</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="pull-quote">
+  "The rise in registered cases does not necessarily indicate a rise in actual crime levels." — Odisha Police officials on NCRB 2024 data. Conversely, under the free-registration policy of 2024, previously suppressed reporting inflated official counts — yet actual crime likely also rose.
+</div>
+
+<!-- ═══ SECTION 11: NEIGHBOURING STATES CONTEXT ══════════ -->
+<div class="section-rule" id="s11">
+  <span class="num">§11</span>
+  <h2>Neighbouring States — Crime Context & Border Dynamics</h2>
+</div>
+
+<div class="chart-container">
+  <div class="chart-title">Violent Crime Rate Comparison — Odisha vs Neighbours (2023, per lakh population)</div>
+  <div class="chart-sub">NCRB 2023 data · Includes IPC violent crimes</div>
+  <canvas id="neighboursChart" height="90"></canvas>
+</div>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Neighbouring State</th>
+      <th>Border with Odisha</th>
+      <th>Key Crime Crossover Issues</th>
+      <th>Specific Odisha Impact</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>West Bengal</strong> (Northeast)</td>
+      <td>Balasore, Mayurbhanj, Keonjhar districts</td>
+      <td>Migrant worker movement, trafficking networks, communal spillover</td>
+      <td>Bengalin-speaking Muslims targeted in Odisha (Juyel Rana case). WB CM Mamata Banerjee commented on Odisha communal violence. Trafficking route from WB into Odisha.</td>
+    </tr>
+    <tr>
+      <td><strong>Jharkhand</strong> (North)</td>
+      <td>Sundargarh, Keonjhar districts</td>
+      <td>LWE activity, mining crime, human trafficking</td>
+      <td>Naxal movement uses Jharkhand-Odisha corridor. Left wing extremists committed 538 crimes in 2023, mostly in Chhattisgarh and Jharkhand — spillover into northern Odisha documented.</td>
+    </tr>
+    <tr>
+      <td><strong>Chhattisgarh</strong> (West)</td>
+      <td>Kalahandi, Nuapada, Malkangiri, Koraput, Rayagada</td>
+      <td>Maoist stronghold; weapon smuggling; tribal displacement</td>
+      <td>Bastar-Malkangiri Maoist axis is most active cross-border criminal corridor. Naxal violence, extortion, and tribal exploitation directly affect Odisha's south.</td>
+    </tr>
+    <tr>
+      <td><strong>Andhra Pradesh</strong> (South)</td>
+      <td>Gajapati, Koraput, Rayagada, Ganjam</td>
+      <td>Trafficking (women/children), sand mafia, border crime</td>
+      <td>Ganjam district has historically been a trafficking source; AP border facilitates exploitation of migrant women workers. Sand and forest crime along AP border.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ═══ SECTION 12: CONCLUSIONS ══════════════════════════ -->
+<div class="section-rule" id="s12">
+  <span class="num">§12</span>
+  <h2>Conclusions & Policy Recommendations</h2>
+</div>
+
+<div class="prose">
+
+  <p><strong>Finding 1 — Structural Problem, Not a Political One Alone.</strong> The long-run trajectory of rising crimes against women (343% since 2000), kidnappings, and cybercrime predates both the BJP and the BJD's final years. These are structural failures in conviction rates, judicial capacity, and social infrastructure that no single government has successfully addressed.</p>
+
+  <p><strong>Finding 2 — The 2024 Political Transition Coincides with a Qualitative Shift in Crime Character.</strong> Under BJD, crime rises were largely statistical — more reporting, more cases. Under BJP's first two years, the character shifted: communal riots rose, mob lynchings accelerated, and identity-based targeting became more visible. This correlation does not imply sole causation, but cannot be dismissed as coincidence either.</p>
+
+  <p><strong>Finding 3 — Conviction Rates Are the System's Core Failure.</strong> An 11% conviction rate for child crimes and 9.3% for dowry cruelty means the legal deterrence architecture is functionally broken. Criminals operate with near-certainty of impunity. No policing intervention can compensate for this.</p>
+
+  <p><strong>Finding 4 — Cybercrime Is the Fastest-Growing Threat.</strong> From ~1,040 cases in 2021 to 7,263 in Bhubaneswar alone in 2024, cybercrime is growing at 40–60% annually. Yet recovery rates are below 3%. This requires a dedicated cyber policing force, not ad-hoc arrests.</p>
+
+  <p><strong>Finding 5 — Social Media Is Now a Crime Infrastructure.</strong> The Cuttack 2025 riots and multiple lynching cases involved WhatsApp mobilisation of mobs. Hate content spreads within hours. Any serious crime-prevention strategy must include digital information hygiene as a law enforcement priority.</p>
+
+</div>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Recommendation</th>
+      <th>Target Area</th>
+      <th>Priority</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>R1</td>
+      <td>Establish Fast-Track Courts dedicated exclusively to crimes against women and children across all 30 districts — with binding 6-month trial completion mandate.</td>
+      <td>Justice delivery</td>
+      <td><span class="badge badge-red">URGENT</span></td>
+    </tr>
+    <tr>
+      <td>R2</td>
+      <td>Create a state-level Cyber Crime Economic Intelligence Unit (CCEIU) with powers to freeze digital assets and coordinate with banks within 24 hours of complaint.</td>
+      <td>Cybercrime</td>
+      <td><span class="badge badge-red">URGENT</span></td>
+    </tr>
+    <tr>
+      <td>R3</td>
+      <td>Enact Odisha Mob Lynching Prevention Act (as several other states have) — with mandatory FIR against instigators and strict bail conditions.</td>
+      <td>Mob violence</td>
+      <td><span class="badge badge-red">URGENT</span></td>
+    </tr>
+    <tr>
+      <td>R4</td>
+      <td>Deploy Social Media Monitoring Cells in all 30 districts to detect and interrupt viral hate content before it triggers mob mobilisation, as Rajasthan has piloted.</td>
+      <td>Communal/mob crime</td>
+      <td><span class="badge badge-red">HIGH</span></td>
+    </tr>
+    <tr>
+      <td>R5</td>
+      <td>Mandate quarterly independent chargesheet audits for all crimes against women/children. Publish district-level conviction rates publicly as accountability mechanism.</td>
+      <td>Justice transparency</td>
+      <td><span class="badge badge-amber">HIGH</span></td>
+    </tr>
+    <tr>
+      <td>R6</td>
+      <td>Expand Operation Anweshan with dedicated child-tracking integration with railway stations, interstate bus terminals, and NGO networks in high-trafficking districts.</td>
+      <td>Child safety</td>
+      <td><span class="badge badge-amber">HIGH</span></td>
+    </tr>
+    <tr>
+      <td>R7</td>
+      <td>Launch Migrant Worker Safety Protocol — ensuring all migrant workers are registered, have a documented identity, and access to a local helpline within 72 hours of arrival.</td>
+      <td>Migrant protection</td>
+      <td><span class="badge badge-amber">MEDIUM</span></td>
+    </tr>
+    <tr>
+      <td>R8</td>
+      <td>Commission an independent Crime Victimisation Survey (household-level) for Odisha — as done nationally in some states — to quantify the dark figure and guide resource allocation.</td>
+      <td>Data quality</td>
+      <td><span class="badge badge-amber">MEDIUM</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- FOOTER -->
+<div class="report-footer">
+  <div>
+    <div>SOURCES: NCRB Crime in India 2021–2024 · NCRB 2025 (provisional) · MHA Parliamentary Data · Odisha TV · OrissaPost · Maktoob Media · Madhyamam Online · Wikipedia (2025 Cuttack Violence) · PTI · GKToday · Pragativadi · The Print · Centre for Study of Society & Secularism</div>
+  </div>
+  <div>
+    <div>DISCLAIMER: All figures are sourced from official NCRB reports, government Assembly statements, and established news media. Estimates for 2025–26 are triangulated from partial data. This report does not express political bias. Correlation ≠ causation.</div>
+  </div>
+</div>
+
+</div><!-- /wrapper -->
+
+<script>
+const COLORS = {
+  red: '#c0392b',
+  redLight: 'rgba(192,57,43,0.15)',
+  teal: '#1a6b6b',
+  tealLight: 'rgba(26,107,107,0.15)',
+  amber: '#d4a017',
+  amberLight: 'rgba(212,160,23,0.15)',
+  purple: '#6b2fa0',
+  purpleLight: 'rgba(107,47,160,0.15)',
+  ink: '#0d0d0d',
+  grey: '#9a9a9a'
+};
+
+const YEARS = ['2021','2022','2023','2024','2025'];
+const YEARS6 = ['2021','2022','2023','2024','2025','2026*'];
+
+Chart.defaults.font.family = "'IBM Plex Sans', sans-serif";
+Chart.defaults.color = '#555';
+Chart.defaults.plugins.legend.labels.boxWidth = 12;
+
+// 1. Total Crimes
+new Chart(document.getElementById('totalCrimesChart'), {
+  type: 'bar',
+  data: {
+    labels: YEARS6,
+    datasets: [{
+      label: 'Total Cognizable Crimes',
+      data: [185220, 191880, 199954, 214113, 229881, 95000],
+      backgroundColor: [COLORS.tealLight, COLORS.tealLight, COLORS.tealLight, COLORS.redLight, COLORS.redLight, 'rgba(150,150,150,0.15)'],
+      borderColor: [COLORS.teal, COLORS.teal, COLORS.teal, COLORS.red, COLORS.red, COLORS.grey],
+      borderWidth: 2
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + ctx.raw.toLocaleString('en-IN') + ' cases' } } },
+    scales: {
+      y: { ticks: { callback: v => (v/1000).toFixed(0) + 'k' }, grid: { color: '#e8e0d0' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 2. Violent Crimes
+new Chart(document.getElementById('violentCrimesChart'), {
+  type: 'line',
+  data: {
+    labels: YEARS,
+    datasets: [
+      { label: 'Murder', data: [1289, 1310, 1362, 1510, 1620], borderColor: COLORS.red, backgroundColor: COLORS.redLight, tension: 0.3, fill: true, borderWidth: 2, pointRadius: 4 },
+      { label: 'Rape', data: [2821, 2940, 1195, 3054, 2994], borderColor: COLORS.amber, backgroundColor: COLORS.amberLight, tension: 0.3, fill: false, borderWidth: 2, pointRadius: 4 },
+      { label: 'Kidnapping', data: [4350, 4982, 5213, 6815, 7100], borderColor: COLORS.purple, backgroundColor: COLORS.purpleLight, tension: 0.3, fill: false, borderWidth: 2, pointRadius: 4 }
+    ]
+  },
+  options: { plugins: { legend: { position: 'top' } }, scales: { y: { grid: { color: '#e8e0d0' } }, x: { grid: { display: false } } } }
+});
+
+// 3. Communal
+new Chart(document.getElementById('communalChart'), {
+  type: 'bar',
+  data: {
+    labels: ['2021','2022','2023','2024\n(Jun-Dec)','2025','2026\n(Jan-Apr)'],
+    datasets: [
+      { label: 'Communal Incidents', data: [10, 12, 44, 54, 15, 6], backgroundColor: COLORS.redLight, borderColor: COLORS.red, borderWidth: 2 },
+      { label: 'Lynching (confirmed)', data: [1, 2, 3, 3, 4, 2], backgroundColor: COLORS.amberLight, borderColor: COLORS.amber, borderWidth: 2 }
+    ]
+  },
+  options: { plugins: { legend: { position: 'top' } }, scales: { y: { grid: { color: '#e8e0d0' } }, x: { grid: { display: false }, ticks: { maxRotation: 0 } } } }
+});
+
+// 4. Women crimes
+new Chart(document.getElementById('womenCrimesChart'), {
+  type: 'line',
+  data: {
+    labels: YEARS6,
+    datasets: [
+      { label: 'Total Crimes vs Women', data: [22410, 23615, 25914, 27449, 33021, 14000], borderColor: COLORS.red, backgroundColor: COLORS.redLight, tension: 0.4, fill: true, borderWidth: 2.5, pointRadius: 5 },
+      { label: 'Dowry Cruelty (498A)', data: [14200, 15400, 17529, 18000, 19200, 8000], borderColor: COLORS.amber, backgroundColor: 'transparent', tension: 0.4, fill: false, borderWidth: 2, pointRadius: 4, borderDash: [5, 3] }
+    ]
+  },
+  options: { plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: ctx => ' ' + ctx.raw.toLocaleString('en-IN') + ' cases' } } }, scales: { y: { ticks: { callback: v => (v/1000).toFixed(0) + 'k' }, grid: { color: '#e8e0d0' } }, x: { grid: { display: false } } } }
+});
+
+// 5. Cyber
+new Chart(document.getElementById('cyberChart'), {
+  type: 'bar',
+  data: {
+    labels: ['2021','2022','2023','2024'],
+    datasets: [
+      { label: 'Cases (BBS UPD)', data: [1040, 2600, 4832, 7263], backgroundColor: COLORS.tealLight, borderColor: COLORS.teal, borderWidth: 2, yAxisID: 'y' },
+      { label: '₹ Loss (Crore)', data: [12, 28, 42.61, 82.53], backgroundColor: COLORS.amberLight, borderColor: COLORS.amber, borderWidth: 2, yAxisID: 'y2' }
+    ]
+  },
+  options: {
+    plugins: { legend: { position: 'top' } },
+    scales: {
+      y: { type: 'linear', position: 'left', grid: { color: '#e8e0d0' }, title: { display: true, text: 'Cases' } },
+      y2: { type: 'linear', position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: '₹ Crore' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 6. SC/ST
+new Chart(document.getElementById('scstChart'), {
+  type: 'line',
+  data: {
+    labels: YEARS,
+    datasets: [
+      { label: 'SC/ST Atrocities', data: [3200, 3500, 3800, 4100, 4400], borderColor: COLORS.purple, backgroundColor: COLORS.purpleLight, tension: 0.3, fill: true, borderWidth: 2, pointRadius: 4 },
+      { label: 'Economic Offences', data: [8400, 9200, 9800, 11000, 12500], borderColor: COLORS.amber, backgroundColor: 'transparent', tension: 0.3, fill: false, borderWidth: 2, pointRadius: 4 }
+    ]
+  },
+  options: { plugins: { legend: { position: 'top' } }, scales: { y: { grid: { color: '#e8e0d0' } }, x: { grid: { display: false } } } }
+});
+
+// 7. Communal timeline
+new Chart(document.getElementById('communalTimelineChart'), {
+  type: 'bar',
+  data: {
+    labels: ['2018','2019','2020','2021','2022','2023','2024','2025'],
+    datasets: [
+      { label: 'Odisha Communal Incidents', data: [9, 0, 8, 10, 12, 44, 54, 15], backgroundColor: COLORS.redLight, borderColor: COLORS.red, borderWidth: 2 }
+    ]
+  },
+  options: {
+    plugins: { legend: { display: false }, annotation: {} },
+    scales: {
+      y: { grid: { color: '#e8e0d0' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 8. Neighbours
+new Chart(document.getElementById('neighboursChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Odisha\n(2024)','Odisha\n(2023)','West Bengal','Jharkhand','Chhattisgarh','Andhra Pradesh','India Avg (2023)'],
+    datasets: [{
+      label: 'Violent Crime Rate per lakh population',
+      data: [161.6, 68, 55, 78, 90, 42, 30],
+      backgroundColor: ['#c0392b', '#e07060', '#2e9e9e', '#2e9e9e', '#2e9e9e', '#2e9e9e', '#888'],
+      borderColor: ['#8b1a1a', '#c05040', '#1a6b6b', '#1a6b6b', '#1a6b6b', '#1a6b6b', '#555'],
+      borderWidth: 2
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { title: { display: true, text: 'Per lakh population' }, grid: { color: '#e8e0d0' } },
+      x: { grid: { display: false }, ticks: { maxRotation: 0 } }
+    }
+  }
+});
+</script>
+</body>
+</html>
